@@ -90,7 +90,6 @@ func sortedWords(words map[string]int) []word {
 func main() {
 	content := getText("https://storage.googleapis.com/apache-beam-samples/shakespeare/romeoandjuliet.txt")
 	words := wordCount(content)
-
 	for _, word := range sortedWords(words) {
 		fmt.Println(word.Key, word.Value)
 	}
