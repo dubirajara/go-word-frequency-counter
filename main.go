@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -10,6 +9,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"stopwords/stopwords"
 )
 
 type word struct {
@@ -18,12 +19,11 @@ type word struct {
 }
 
 func wordCount(str string) map[string]int {
-	stpwords, _ := openStopWords("./StopWords.txt")
 	wordList := strings.Fields(str)
 	wordCounts := make(map[string]int)
 	for _, word := range wordList {
 		cleanWord := cleanText(strings.ToLower(word))
-		found := checkStopWords(stpwords, cleanWord)
+		found := checkStopWords(cleanWord)
 		if !found {
 			wordCounts[cleanWord]++
 		}
@@ -51,23 +51,8 @@ func cleanText(text string) string {
 	return proccessedWord
 }
 
-func openStopWords(path string) ([]string, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	var lines []string
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
-	}
-	return lines, scanner.Err()
-}
-
-func checkStopWords(stpwords []string, word string) bool {
-	for _, item := range stpwords {
+func checkStopWords(word string) bool {
+	for _, item := range stopwords.StopWords() {
 		if item == word {
 			return true
 		}
