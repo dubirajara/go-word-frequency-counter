@@ -13,7 +13,8 @@ import (
 	"stopwords/stopwords"
 )
 
-type word struct {
+//Type word define.
+type Word struct {
 	Key   string
 	Value int
 }
@@ -60,10 +61,10 @@ func checkStopWords(word string) bool {
 	return false
 }
 
-func sortedWords(words map[string]int) []word {
-	var sorted []word
+func sortedWords(words map[string]int) []Word {
+	var sorted []Word
 	for k, v := range words {
-		sorted = append(sorted, word{k, v})
+		sorted = append(sorted, Word{k, v})
 	}
 
 	sort.Slice(sorted, func(i, j int) bool {
