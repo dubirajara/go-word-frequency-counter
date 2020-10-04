@@ -12,18 +12,23 @@ import (
 	"strings"
 )
 
+type word struct {
+	Key   string
+	Value int
+}
+
 func wordCount(str string) map[string]int {
-	stpwords, _ := openStopWordsFile("./StopWords.txt")
+	stpwords, _ := openStopWords("./StopWords.txt")
 	wordList := strings.Fields(str)
-	wordcounts := make(map[string]int)
+	wordCounts := make(map[string]int)
 	for _, word := range wordList {
 		cleanWord := cleanText(strings.ToLower(word))
 		found := checkStopWords(stpwords, cleanWord)
 		if !found {
-			wordcounts[cleanWord]++
+			wordCounts[cleanWord]++
 		}
 	}
-	return wordcounts
+	return wordCounts
 }
 
 func getText(url string) string {
@@ -46,7 +51,7 @@ func cleanText(text string) string {
 	return proccessedWord
 }
 
-func openStopWordsFile(path string) ([]string, error) {
+func openStopWords(path string) ([]string, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
@@ -70,24 +75,23 @@ func checkStopWords(stpwords []string, word string) bool {
 	return false
 }
 
-func main() {
-	content := getText("https://storage.googleapis.com/apache-beam-samples/shakespeare/romeoandjuliet.txt")
-	words := wordCount(content)
-	type kv struct {
-		Key   string
-		Value int
-	}
-	var sorted []kv
+func sortedWords(words map[string]int) []word {
+	var sorted []word
 	for k, v := range words {
-		sorted = append(sorted, kv{k, v})
+		sorted = append(sorted, word{k, v})
 	}
 
 	sort.Slice(sorted, func(i, j int) bool {
 		return sorted[i].Value > sorted[j].Value
 	})
+	return sorted
+}
 
-	for _, kv := range sorted {
-		fmt.Println(kv.Key, kv.Value)
+func main() {
+	content := getText("https://storage.googleapis.com/apache-beam-samples/shakespeare/romeoandjuliet.txt")
+	words := wordCount(content)
+
+	for _, word := range sortedWords(words) {
+		fmt.Println(word.Key, word.Value)
 	}
-
 }
