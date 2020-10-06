@@ -13,7 +13,7 @@ import (
 	"stopwords/stopwords"
 )
 
-//Type word defined.
+//Word type struct defined.
 type Word struct {
 	key   string
 	value int
