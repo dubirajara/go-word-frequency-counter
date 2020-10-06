@@ -13,10 +13,10 @@ import (
 	"stopwords/stopwords"
 )
 
-//Type word define.
+//Type word defined.
 type Word struct {
-	Key   string
-	Value int
+	key   string
+	value int
 }
 
 func wordCount(str string) map[string]int {
@@ -68,7 +68,7 @@ func sortedWords(words map[string]int) []Word {
 	}
 
 	sort.Slice(sorted, func(i, j int) bool {
-		return sorted[i].Value > sorted[j].Value
+		return sorted[i].value > sorted[j].value
 	})
 	return sorted
 }
@@ -77,6 +77,6 @@ func main() {
 	content := getText(os.Args[1])
 	words := wordCount(content)
 	for _, word := range sortedWords(words) {
-		fmt.Println(word.Key, word.Value)
+		fmt.Println(word.key, word.value)
 	}
 }
