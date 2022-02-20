@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -8,6 +9,7 @@ import (
 	"os"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 
 	"stopwords/stopwords"
@@ -73,10 +75,28 @@ func sortedWords(words map[string]int) []Word {
 	return sorted
 }
 
+func saveCsvResults(words map[string]int) {
+
+	file, err := os.Create("./word_frequencies_report.csv")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	writer := csv.NewWriter(file)
+
+	for _, word := range sortedWords(words) {
+		row := []string{word.key, strconv.Itoa(word.value)}
+
+		err := writer.Write(row)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
+}
+
 func main() {
 	content := getText(os.Args[1])
 	words := wordCount(content)
-	for _, word := range sortedWords(words) {
-		fmt.Println(word.key, word.value)
-	}
+	saveCsvResults(words)
 }
