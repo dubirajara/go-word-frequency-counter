@@ -73,7 +73,6 @@ func sortedWords(words map[string]int) []Word {
 }
 
 func saveCsvResults(words map[string]int) {
-
 	file, err := os.Create("./word_frequencies_report.csv")
 	checkError("Cannot create file", err)
 	defer file.Close()
