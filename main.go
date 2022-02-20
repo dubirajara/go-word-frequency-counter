@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/csv"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -36,9 +35,8 @@ func wordCount(str string) map[string]int {
 
 func getText(url string) string {
 	resp, err := http.Get(url)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	checkError("Cannot get url content", err)
+
 	body, err := ioutil.ReadAll(resp.Body)
 
 	defer resp.Body.Close()
@@ -47,9 +45,8 @@ func getText(url string) string {
 
 func cleanText(text string) string {
 	reg, err := regexp.Compile("[^a-zA-Z0-9]+")
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkError("Cannot clean text", err)
+
 	proccessedWord := reg.ReplaceAllString(text, "")
 	return proccessedWord
 }
@@ -78,21 +75,25 @@ func sortedWords(words map[string]int) []Word {
 func saveCsvResults(words map[string]int) {
 
 	file, err := os.Create("./word_frequencies_report.csv")
-	if err != nil {
-		fmt.Println(err)
-	}
+	checkError("Cannot create file", err)
+	defer file.Close()
 
 	writer := csv.NewWriter(file)
+	defer writer.Flush()
 
 	for _, word := range sortedWords(words) {
 		row := []string{word.key, strconv.Itoa(word.value)}
 
 		err := writer.Write(row)
-		if err != nil {
-			fmt.Println(err)
-		}
+		checkError("Cannot write to file", err)
 	}
 
+}
+
+func checkError(message string, err error) {
+	if err != nil {
+		log.Fatal(message, err)
+	}
 }
 
 func main() {
